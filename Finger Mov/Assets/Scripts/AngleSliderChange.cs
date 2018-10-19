@@ -13,11 +13,15 @@ public class AngleSliderChange : MonoBehaviour {
     public GameObject sliderJoint1;
     public GameObject sliderJoint2;
     public GameObject sliderJoint3;
+    public GameObject fixedRatioCheck;
+    GameObject angleValueJoint3;
     public int typeJoint;
     Text angleText;
+    Text angleTextJoint3;
     Slider sliderAngle1;
     Slider sliderAngle2;
     Slider sliderAngle3;
+    Toggle toogleFixedRatio;
 
     // Use this for initialization
     void Start () {
@@ -26,7 +30,13 @@ public class AngleSliderChange : MonoBehaviour {
         sliderAngle2 = sliderJoint2.GetComponent<Slider>();
         sliderAngle3 = sliderJoint3.GetComponent<Slider>();
 
+        toogleFixedRatio = fixedRatioCheck.GetComponent<Toggle>();
+        toogleFixedRatio.isOn = false;
+
         angleText = angleValue.GetComponent<Text>();
+
+        angleValueJoint3 = GameObject.Find("DIP Angle");
+        angleTextJoint3 = angleValueJoint3.GetComponent<Text>();
 
         switch(typeJoint)
         {
@@ -50,10 +60,12 @@ public class AngleSliderChange : MonoBehaviour {
                 }
         }
 
+        toogleFixedRatio.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
 
 
 
-        
+
+
 
     }
 
@@ -62,6 +74,7 @@ public class AngleSliderChange : MonoBehaviour {
         //Debug.Log(mainSlider.value);
         //Quaternion childRotation1 = childJoint.transform.rotation;
         //Quaternion childRotation2 = childJoint2.transform.rotation;
+
 
         switch (typeJoint)
         {
@@ -75,12 +88,34 @@ public class AngleSliderChange : MonoBehaviour {
                 {
                     joint2.transform.eulerAngles = new Vector3(0.0f, 0.0f, sliderAngle1.value + sliderAngle2.value);
                     angleText.text = sliderAngle2.value.ToString();
+                    if (toogleFixedRatio.isOn)
+                    {
+                        joint3.transform.eulerAngles = new Vector3(0.0f, 0.0f, sliderAngle1.value + sliderAngle2.value + (sliderAngle2.value * 2) / 3);
+                        angleTextJoint3.text = ((sliderAngle2.value * 2) / 3).ToString();
+                        sliderAngle3.value = ((sliderAngle2.value * 2) / 3);
+
+                    }
                     break;
                 }
             case 3:
                 {
-                    joint3.transform.eulerAngles = new Vector3(0.0f, 0.0f, sliderAngle1.value + sliderAngle2.value + sliderAngle3.value);
-                    angleText.text = sliderAngle2.value.ToString();
+                    print(toogleFixedRatio.isOn);
+                    if (!toogleFixedRatio.isOn)
+                    {
+                        //sliderAngle3.interactable = true;
+                        joint3.transform.eulerAngles = new Vector3(0.0f, 0.0f, sliderAngle1.value + sliderAngle2.value + sliderAngle3.value);
+                        angleText.text = sliderAngle3.value.ToString();
+                    }
+                    else
+                    {
+                        //sliderAngle3.interactable = false;
+                        //joint3.transform.eulerAngles = new Vector3(0.0f, 0.0f, sliderAngle1.value + sliderAngle2.value + (sliderAngle2.value * 2) / 3);
+                        //angleText.text = ((sliderAngle2.value * 2) / 3).ToString();
+                        print(angleText.text);
+                        
+                    }
+                    
+                    
                     break;
                 }
         }
