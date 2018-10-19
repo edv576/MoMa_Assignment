@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 public class AngleSliderChange : MonoBehaviour {
 
@@ -18,10 +20,14 @@ public class AngleSliderChange : MonoBehaviour {
     public int typeJoint;
     Text angleText;
     Text angleTextJoint3;
+    Text coordinatesText;
     Slider sliderAngle1;
     Slider sliderAngle2;
     Slider sliderAngle3;
     Toggle toogleFixedRatio;
+    float proximalPhalanxLength;
+    float intermediatePhalanxLength;
+    float distalPhalanxLength;
 
     // Use this for initialization
     void Start () {
@@ -37,6 +43,25 @@ public class AngleSliderChange : MonoBehaviour {
 
         angleValueJoint3 = GameObject.Find("DIP Angle");
         angleTextJoint3 = angleValueJoint3.GetComponent<Text>();
+
+        proximalPhalanxLength = 39.8f;
+        intermediatePhalanxLength = 22.4f;
+        distalPhalanxLength = 15.8f;
+
+        float x, y;
+
+        x = proximalPhalanxLength * Mathf.Cos(sliderAngle1.value * (Mathf.PI / 180.0f)) +
+            intermediatePhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
+            distalPhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
+        y = proximalPhalanxLength * Mathf.Sin(sliderAngle1.value * (Mathf.PI / 180.0f)) +
+            intermediatePhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
+            distalPhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
+
+        x = Mathf.Round(x * 100f) / 100f;
+        y = Mathf.Round(y * 100f) / 100f;
+
+        coordinatesText = GameObject.Find("Values Coordinates").GetComponent<Text>();
+        coordinatesText.text = "X: " + x.ToString() + " Y: " + y.ToString();
 
         switch(typeJoint)
         {
@@ -61,6 +86,8 @@ public class AngleSliderChange : MonoBehaviour {
         }
 
         toogleFixedRatio.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
+
+
 
 
 
@@ -120,8 +147,21 @@ public class AngleSliderChange : MonoBehaviour {
                 }
         }
 
-        
-        
+        float x, y;
+
+        x = proximalPhalanxLength * Mathf.Cos(sliderAngle1.value * (Mathf.PI / 180.0f)) +
+            intermediatePhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
+            distalPhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
+        y = proximalPhalanxLength * Mathf.Sin(sliderAngle1.value * (Mathf.PI / 180.0f)) +
+            intermediatePhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
+            distalPhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
+
+        x = Mathf.Round(x * 100f) / 100f;
+        y = Mathf.Round(y * 100f) / 100f;
+        coordinatesText.text = "X: " + x.ToString() + " Y: " + y.ToString();
+
+
+
         //childJoint.transform.eulerAngles =  new Vector3(0.0f, 0.0f, sliderAngleSub1.value + sliderAngle.value);
         //childJoint2.transform.eulerAngles = new Vector3(0.0f, 0.0f, sliderAngleSub2.value + sliderAngleSub1.value + sliderAngle.value);
         //childJoint.transform.localEulerAngles = new Vector3(0.0f, 0.0f, sliderAngleSub1.value);
@@ -133,8 +173,8 @@ public class AngleSliderChange : MonoBehaviour {
         //print(childJoint.transform.eulerAngles.ToString());
         //childJoint.transform.rotation = childRotation1;
         //childJoint2.transform.rotation = childRotation2;
-       
-        
+
+
     }
 
     // Update is called once per frame
