@@ -287,12 +287,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94af766056109d34da11d9677c0ea3b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joint: {fileID: 1666145561}
   angleValue: {fileID: 925343771}
-  childJoint: {fileID: 83267245}
-  childJoint2: {fileID: 1598032671}
-  subAngleSlider1: {fileID: 1390640177}
-  subAngleSlider2: {fileID: 1390640177}
+  joint1: {fileID: 58132031}
+  joint2: {fileID: 1666145561}
+  joint3: {fileID: 83267245}
+  sliderJoint1: {fileID: 1222383011}
+  sliderJoint2: {fileID: 48770985}
+  sliderJoint3: {fileID: 1390640177}
+  typeJoint: 2
 --- !u!1 &58132031
 GameObject:
   m_ObjectHideFlags: 0
@@ -1487,12 +1489,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94af766056109d34da11d9677c0ea3b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joint: {fileID: 58132031}
   angleValue: {fileID: 1860852337}
-  childJoint: {fileID: 1666145561}
-  childJoint2: {fileID: 83267245}
-  subAngleSlider1: {fileID: 48770985}
-  subAngleSlider2: {fileID: 1390640177}
+  joint1: {fileID: 58132031}
+  joint2: {fileID: 1666145561}
+  joint3: {fileID: 83267245}
+  sliderJoint1: {fileID: 1222383011}
+  sliderJoint2: {fileID: 48770985}
+  sliderJoint3: {fileID: 1390640177}
+  typeJoint: 1
 --- !u!1 &1228973022
 GameObject:
   m_ObjectHideFlags: 0
@@ -1892,12 +1896,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94af766056109d34da11d9677c0ea3b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joint: {fileID: 83267245}
   angleValue: {fileID: 1228973022}
-  childJoint: {fileID: 1598032671}
-  childJoint2: {fileID: 1598032671}
-  subAngleSlider1: {fileID: 1390640177}
-  subAngleSlider2: {fileID: 1390640177}
+  joint1: {fileID: 58132031}
+  joint2: {fileID: 1666145561}
+  joint3: {fileID: 83267245}
+  sliderJoint1: {fileID: 1222383011}
+  sliderJoint2: {fileID: 48770985}
+  sliderJoint3: {fileID: 1390640177}
+  typeJoint: 3
 --- !u!1 &1488125646
 GameObject:
   m_ObjectHideFlags: 0
