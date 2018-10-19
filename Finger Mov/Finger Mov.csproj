@@ -300,6 +300,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\AngleSliderChange - Copy.cs" />
     <Compile Include="Assets\Scripts\AngleSliderChange.cs" />
+    <Compile Include="Assets\Scripts\CheckBehaviour.cs" />
     <Compile Include="Assets\SoxAnimationToolkit\ConstraintTransform\ConstraintTransform.cs" />
     <Compile Include="Assets\SoxAnimationToolkit\DragTransform\SoxAtkDragTransform.cs" />
     <Compile Include="Assets\SoxAnimationToolkit\JiggleBoneSimple\SoxAtkJiggleBoneSimple.cs" />
