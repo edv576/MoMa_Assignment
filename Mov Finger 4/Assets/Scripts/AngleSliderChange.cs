@@ -39,6 +39,8 @@ public class AngleSliderChange : MonoBehaviour {
         toogleFixedRatio = fixedRatioCheck.GetComponent<Toggle>();
         toogleFixedRatio.isOn = false;
 
+        
+
         angleText = angleValue.GetComponent<Text>();
 
         angleValueJoint3 = GameObject.Find("DIP Angle");
