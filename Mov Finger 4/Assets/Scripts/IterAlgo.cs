@@ -51,14 +51,14 @@ public class IterAlgo : MonoBehaviour
     {
         if(!isFixed)
         {
-            float x1 = 0.0f;
+            float x1 = 6.0f;
 
-            while(x1 < 5.0f)
+            while(x1 > 2.0f)
             {
                 goalPos = Vector<float>.Build.DenseOfArray(new[] { x1, -2f });
 
 
-                float prevTheta1 = 0; //Random.Range(0, Mathf.PI);
+                float prevTheta1 = 0; //Random.Range(0, Mathf.PI);l
                 float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
                 float prevTheta3 = 0; //Random.Range(0, Mathf.PI);
 
@@ -126,8 +126,8 @@ public class IterAlgo : MonoBehaviour
                         break;
 
                 }
-                yield return new WaitForSeconds(0.01f);
-                x1 += 0.1f;
+                yield return new WaitForSeconds(0.05f);
+                x1 -= 0.1f;
 
             }
             
