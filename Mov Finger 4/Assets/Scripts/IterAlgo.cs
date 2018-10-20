@@ -31,7 +31,7 @@ public class IterAlgo : MonoBehaviour
     private float theta_3max = 0;                    //  0   degrees
 
     //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (3,-2)
-    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 3f, -2f });
+    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 0f, -2f });
     public bool isFixed;
 
     // Use this for initialization
@@ -47,11 +47,106 @@ public class IterAlgo : MonoBehaviour
 
     }
 
+    IEnumerator touchOIllusion()
+    {
+        if(!isFixed)
+        {
+            float x1 = 0.0f;
+
+            while(x1 < 5.0f)
+            {
+                goalPos = Vector<float>.Build.DenseOfArray(new[] { x1, -2f });
+
+
+                float prevTheta1 = 0; //Random.Range(0, Mathf.PI);
+                float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
+                float prevTheta3 = 0; //Random.Range(0, Mathf.PI);
+
+                float epsilon = 9999f;
+
+                Vector<float> prevQ = DenseVector.OfArray(new[] { prevTheta1, prevTheta2, prevTheta3 });
+
+
+                int iterations = 0;
+                int maxIterations = 50;
+
+
+                while (true)
+                {
+                    Debug.Log($"iteration: {iterations}");
+
+                    Vector<float> newQ = inverseJacobian(prevTheta1, prevTheta2, prevTheta3);
+                    epsilon = (float)(newQ - prevQ).L2Norm();
+
+                    Debug.Log($"epsilon: {epsilon}");
+
+                    if (epsilon <= 0.0001f) break;
+
+                    prevTheta1 = newQ[0];
+                    prevTheta2 = newQ[1];
+                    prevTheta3 = newQ[2];
+
+                    var diff = newQ - prevTheta1;
+
+                    prevQ = DenseVector.OfArray(new[] { prevTheta1, prevTheta2, prevTheta3 });
+
+                    var finaltheta1 = prevTheta1 * Mathf.Rad2Deg;
+                    var finaltheta2 = (prevTheta1 + prevTheta2) * Mathf.Rad2Deg;
+                    var finaltheta3 = (prevTheta1 + prevTheta2 + prevTheta3) * Mathf.Rad2Deg;
+                    sliderAngle1.value = prevTheta1 * Mathf.Rad2Deg;
+                    sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
+                    sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
+
+                    if (found)
+                    {
+                        // GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
+                        // GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                        // GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+
+                        Debug.Log($"1: {finaltheta1}. 2: {finaltheta2}. 3: {finaltheta3}");
+
+                        if (!isFixed)
+                        {
+                            sliderAngle1.value = prevTheta1 * Mathf.Rad2Deg;
+                            sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
+                            sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
+                        }
+                        else
+                        {
+                            GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
+                            GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                            GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                        }
+
+                        //return;
+                    }
+
+                    iterations++;
+                    if (iterations > maxIterations)
+                        break;
+
+                }
+                yield return new WaitForSeconds(0.01f);
+                x1 += 0.1f;
+
+            }
+            
+        }
+        
+
+    }
+
     // Update is called once per frame
     void Update()
     {
 
         isFixed = GameObject.Find("Fixed Ratio Check").GetComponent<Toggle>().isOn;
+
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            StartCoroutine(touchOIllusion());
+
+        }
 
         if (!Input.GetKeyUp("space")) return;
 
