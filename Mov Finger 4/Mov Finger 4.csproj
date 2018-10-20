@@ -622,6 +622,7 @@
     <Compile Include="Assets\Scripts\AngleSliderChange.cs" />
     <Compile Include="Assets\Scripts\CheckBehaviour.cs" />
     <Compile Include="Assets\Scripts\IterAlgo.cs" />
+    <Compile Include="Assets\Scripts\ValuesManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Packages\MathNet.Numerics.4.6.0\lib\net461\MathNet.Numerics.xml" />

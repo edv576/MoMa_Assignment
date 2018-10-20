@@ -61,7 +61,7 @@ public class AngleSliderChange : MonoBehaviour {
         y = Mathf.Round(y * 100f) / 100f;
 
         coordinatesText = GameObject.Find("Values Coordinates").GetComponent<Text>();
-        coordinatesText.text = "X: " + x.ToString() + " Y: " + y.ToString();
+        coordinatesText.text = "X => " + x.ToString() + " Y => " + y.ToString();
 
         switch(typeJoint)
         {
@@ -158,7 +158,7 @@ public class AngleSliderChange : MonoBehaviour {
 
         x = Mathf.Round(x * 100f) / 100f;
         y = Mathf.Round(y * 100f) / 100f;
-        coordinatesText.text = "X: " + x.ToString() + " Y: " + y.ToString();
+        coordinatesText.text = "X => " + x.ToString() + " Y => " + y.ToString();
 
 
 
