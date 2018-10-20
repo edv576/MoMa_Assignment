@@ -64,6 +64,7 @@ public class IterAlgo : MonoBehaviour
 
     IEnumerator touchOIllusion()
     {
+        int totalIterations = 0;
         if (!isFixed)
         {
             float x1 = 6.0f;
@@ -110,7 +111,7 @@ public class IterAlgo : MonoBehaviour
 
                     Debug.Log($"epsilon: {epsilon}");
 
-                    if (epsilon <= 0.0001f) break;
+                   // if (epsilon <= 0.0001f) break;
 
                     prevTheta1 = newQ[0];
                     prevTheta2 = newQ[1];
@@ -148,7 +149,8 @@ public class IterAlgo : MonoBehaviour
                             GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                         }
 
-                        //return;
+                        totalIterations += iterations;
+                        break;
                     }
 
                     iterations++;
@@ -156,6 +158,8 @@ public class IterAlgo : MonoBehaviour
                         break;
 
                 }
+
+
                 yield return new WaitForSeconds(0.05f);
                 x1 -= 0.1f;
 
@@ -181,26 +185,24 @@ public class IterAlgo : MonoBehaviour
         if (!Input.GetKeyUp("space")) return;
 
         var gps = GameObject.Find("Destination").transform.position;
-        Vector<float>.Build.DenseOfArray(new[] { gps.x, gps.y });
+        goalPos = Vector<float>.Build.DenseOfArray(new[] { gps.x, gps.y });
 
 
-       float prevTheta1 = lastTheta1;
-       float prevTheta2 = lastTheta2;
-       float prevTheta3 = lastTheta3;
+        float prevTheta1 = lastTheta1;
+        float prevTheta2 = lastTheta2;
+        float prevTheta3 = lastTheta3;
 
 
-        //float prevTheta1 = Random.Range(theta_1min, theta_1max);
-        //float prevTheta2 = Random.Range(theta_2min, theta_2max);
-        //float prevTheta3 = Random.Range(theta_2min, theta_2max);
+        // float prevTheta1 = Random.Range(theta_1min, theta_1max);
+        // float prevTheta2 = Random.Range(theta_2min, theta_2max);
+        // float prevTheta3 = Random.Range(theta_2min, theta_2max);
 
         float epsilon = 9999f;
 
         Vector<float> prevQ = DenseVector.OfArray(new[] { prevTheta1, prevTheta2, prevTheta3 });
 
-
         int iterations = 0;
         int maxIterations = 50;
-
 
         while (true)
         {
@@ -228,26 +230,32 @@ public class IterAlgo : MonoBehaviour
             sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
             sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
 
+
+            lastTheta1 = prevTheta1;
+            lastTheta2 = prevTheta2;
+            lastTheta3 = prevTheta3;
+
             if (found)
             {
+                found = false;
                 // GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
                 // GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                 // GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
 
                 Debug.Log($"1: {finaltheta1}. 2: {finaltheta2}. 3: {finaltheta3}");
 
-                if (!isFixed)
-                {
-                    sliderAngle1.value = prevTheta1 * Mathf.Rad2Deg;
-                    sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
-                    sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
-                }
-                else
-                {
-                    GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
-                    GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
-                    GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
-                }
+                //if (!isFixed)
+                //{
+                //    sliderAngle1.value = prevTheta1 * Mathf.Rad2Deg;
+                //    sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
+                //    sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
+                //}
+                //else
+                //{
+                //    GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
+                //    GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                //    GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                //}
 
                 return;
             }
@@ -353,9 +361,12 @@ public class IterAlgo : MonoBehaviour
 
         //the difference between the previous and goal positino
         Vector<float> deltaT = goalPos - prevGuess;
-        if (deltaT.L2Norm() < 0.01f)
+
+        if (deltaT.L2Norm() < 0.001f)
         {
             found = true;
+            Debug.Log($"EARLY STOPPING AT {prevGuess}");
+            return q;
         }
 
         var newQ = q + invJ * deltaT;

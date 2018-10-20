@@ -63,8 +63,6 @@
     <Compile Include="Assets\Scripts\AngleSliderChange.cs" />
     <Compile Include="Assets\Scripts\CheckBehaviour.cs" />
     <Compile Include="Assets\Scripts\IterAlgo.cs" />
-    <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
-    <Compile Include="Assets\Scripts\NewBehaviourScript1.cs" />
     <Compile Include="Assets\Scripts\ValuesManager.cs" />
     <None Include="Assets\Packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.xml" />
     <None Include="Assets\Packages\MathNet.Numerics.4.6.0\lib\net461\MathNet.Numerics.xml" />
