@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\AngleSliderChange.cs" />
     <Compile Include="Assets\Scripts\CheckBehaviour.cs" />
+    <Compile Include="Assets\Scripts\DestinationBehavior.cs" />
     <Compile Include="Assets\Scripts\IterAlgo.cs" />
     <Compile Include="Assets\Scripts\ValuesManager.cs" />
     <None Include="Assets\Packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.xml" />

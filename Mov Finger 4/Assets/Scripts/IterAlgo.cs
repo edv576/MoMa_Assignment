@@ -8,6 +8,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Statistics.Mcmc;
 using UnityEditor.Experimental.UIElements;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -96,6 +97,170 @@ public class IterAlgo : MonoBehaviour
         sliderAngle3 = sliderJoint3.GetComponent<Slider>();
 
     }
+
+    IEnumerator rotateJoints(int jointNr, float theta1 = 0, float theta2 = 0, float theta3 = 0, int level = 0)
+    {
+        float timestep = 1f / 60f;
+
+        sliderAngle1.value = theta1 * Mathf.Rad2Deg;
+        sliderAngle2.value = theta2 * Mathf.Rad2Deg;
+        sliderAngle3.value = theta3 * Mathf.Rad2Deg;
+
+        yield return new WaitForEndOfFrame();
+
+
+
+        float min = 01;
+        float max = 0;
+        Slider slider;
+        Transform joint;
+        switch (jointNr)
+        {
+            case 0:
+                joint = GameObject.Find("MCP").transform;
+                slider = sliderAngle1;
+                min = theta_1min;
+                max = theta_1max;
+                break;
+            case 1:
+                joint = GameObject.Find("PIP").transform;
+                min = theta_2min;
+                max = theta_2max;
+                slider = sliderAngle2;
+                break;
+            case 2:
+                joint = GameObject.Find("DIP").transform;
+                min = theta_3min;
+                max = theta_3max;
+                slider = sliderAngle3;
+                break;
+
+            default:
+                joint = GameObject.Find("MCP").transform;
+                slider = sliderAngle1;
+                min = theta_1min;
+                max = theta_1max;
+                break;
+        }
+
+        var t = GameObject.Find("DIP");
+        var verts = new List<Vector3>();
+
+        verts.Add(t.transform.position);
+
+        // joint.eulerAngles = new Vector3(0, 0, min * Mathf.Rad2Deg);
+        // yield return new WaitForEndOfFrame();
+        for (float t1 = min; t1 <= max; t1 += timestep)
+        {
+            var degr = t1 * Mathf.Rad2Deg;
+            // joint.Rotate(Vector3.forward,t1);
+            // var rot = joint.rotation;
+            // rot.z = t1;
+            //joint.rotation = rot;
+
+
+
+            var x = sliderAngle1.value * Mathf.Rad2Deg;
+            var y = sliderAngle1.value * Mathf.Rad2Deg;
+            var z = sliderAngle1.value * Mathf.Rad2Deg;
+
+
+            var pos = GameObject.Find("Tip").transform.position;
+
+            //Vector3 p = getTipPos(x, y, z);
+            var diff = pos - verts.Last();
+
+            // Debug.DrawLine(verts.Last(), pos, Color.green);
+            verts.Add(pos);
+            slider.value = degr;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        // Draw a yellow sphere at the transform's position
+
+
+        for (int i = 0; i < verts.Count - 5; i += 4)
+        {
+            Debug.DrawLine(verts[i], verts[i + 5], Color.yellow, float.PositiveInfinity, false);
+            Debug.Log($"DIFFERENCE: {(verts[i] - verts[i + 5]).magnitude}");
+
+            Gizmos.color = Color.green;
+            //Gizmos.DrawSphere(verts[i], 3);
+
+            //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            // go.transform.position = verts[i];
+            //go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        }
+        //// sliderAngle2.value = theta_2max;
+        //for (float t1 = theta_1min; t1 <= theta_1max; t1 += timestep)
+        //{
+        //    var degr = t1 * Mathf.Rad2Deg;
+
+        //    sliderAngle1.value = degr;
+
+        //    yield return new WaitForEndOfFrame();
+        //}
+
+
+        //for (float t1 = theta_1min; t1 <= theta_1max; t1 += timestep)
+        //{
+        //    var degr = t1 * Mathf.Rad2Deg;
+
+        //    sliderAngle1.value = degr;
+
+        //    yield return new WaitForEndOfFrame();
+        //}
+
+        //sliderAngle2.value = theta_2min;
+        //yield return new WaitForEndOfFrame();
+        //for (float t1 = theta_1max; t1 >= theta_1min; t1 -= timestep)
+        //{
+        //    var degr = t1 * Mathf.Rad2Deg;
+
+        //    sliderAngle1.value = degr;
+
+        //    yield return new WaitForEndOfFrame();
+        //}
+
+        //for (float t2 = theta_2min; t2 <= theta_2max; t2 += timestep)
+        //{
+        //    var degr = t2 * Mathf.Rad2Deg;
+
+        //    sliderAngle2.value = degr;
+        //    yield return new WaitForEndOfFrame();
+        //}
+        // yield return null;
+        if (level == 0)
+        {
+            StartCoroutine(rotateJoints(0, theta_1max, theta_2min, theta3, 1));
+            // StartCoroutine(rotateJoints(1,theta_1max, theta_2min, theta3, level + 1));
+        }
+
+        if (level == 1)
+        {
+            StartCoroutine(rotateJoints(0, theta_1max, theta_2min, theta_3min, 2));
+        }
+
+
+
+    }
+
+    Vector3 getTipPos(float x, float y, float z)
+    {
+
+        float f1X = L1 * Mathf.Cos(x) +
+                    L2 * Mathf.Cos(x + y) +
+                    L3 * Mathf.Cos(x + y + z);
+
+        float f2Y = L1 * Mathf.Sin(x) +
+                    L2 * Mathf.Sin(x + y) +
+                    L3 * Mathf.Sin(x + y + z);
+
+        return new Vector3(f1X, f2Y, 0);
+
+    }
+
 
     IEnumerator touchOIllusion()
     {
@@ -220,29 +385,47 @@ public class IterAlgo : MonoBehaviour
 
     }
 
+    private Coroutine traceRoutine = null;
+
+    IEnumerator drawTrace()
+    {
+        var pos = GameObject.Find("Tip").transform.position;
+        var s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        s.transform.position = pos;
+        //traceRoutine = null;
+        return null;
+    }
+
+    private Vector3 LastPos = new Vector3(7.8f,1f,0);
+
     // Update is called once per frame
     void Update()
     {
+        // Debug.DrawLine(new Vector3(0,0,0), Time.realtimeSinceStartup* new Vector3(5,5,0), Color.red);
 
         isFixed = GameObject.Find("Fixed Ratio Check").GetComponent<Toggle>().isOn;
 
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyUp(KeyCode.I))
         {
             StartCoroutine(touchOIllusion());
 
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space))
         {
-            isAnimated *= -1; 
+            isAnimated *= -1;
 
         }
 
-        
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            StartCoroutine(TraceReachablePositions());
+        }
 
+ 
         //if (!Input.GetKeyUp("space")) return;
 
-        
+
         var gps = GameObject.Find("Destination").transform.position;
         goalPos = Vector<float>.Build.DenseOfArray(new[] { gps.x, gps.y });
 
@@ -330,13 +513,35 @@ public class IterAlgo : MonoBehaviour
 
         }
 
+        var currentPos = GameObject.Find("Tip").transform.position  ;
+        var diffLast = (LastPos-currentPos).magnitude;
 
-        
+        if (diffLast > 0.2f)
+        {
+            var tracebutton = GameObject.Find("Trace").GetComponent<Toggle>();
+
+            if (tracebutton.isOn)
+            {
+                Debug.DrawLine(LastPos,currentPos,Color.green,float.PositiveInfinity,false);
+
+            }
+
+
+
+            LastPos = currentPos;
+        }
+
+
+    }
 
 
 
 
 
+    IEnumerator TraceReachablePositions()
+    {
+        StartCoroutine(rotateJoints(0, 0f, theta_2max, theta_3max));
+        yield return new WaitForEndOfFrame();
     }
 
     Vector<float> inverseJacobian2(float x, float y)

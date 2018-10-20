@@ -1,0 +1,4 @@
+Mode: Previous 
+Total iterations: 127
+data:
+	7	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
