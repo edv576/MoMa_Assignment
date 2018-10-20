@@ -30,6 +30,17 @@ public class IterAlgo : MonoBehaviour
     private float theta_3min = -2f / 3f * Mathf.PI;  // -120 degrees
     private float theta_3max = 0;                    //  0   degrees
 
+    public InitModeEnum InitMode  = InitModeEnum.Zero;
+
+    public enum InitModeEnum
+    {
+        Zero,
+        Random,
+        Previous
+    };
+
+
+
     //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (3,-2)
     Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 0f, -2f });
     public bool isFixed;
@@ -49,18 +60,33 @@ public class IterAlgo : MonoBehaviour
 
     IEnumerator touchOIllusion()
     {
-        if(!isFixed)
+        if (!isFixed)
         {
             float x1 = 6.0f;
+            float prevTheta1 = 0;
+            float prevTheta2 = 0;
+            float prevTheta3 = 0;
 
-            while(x1 > 2.0f)
+
+            while (x1 > 2.0f)
             {
                 goalPos = Vector<float>.Build.DenseOfArray(new[] { x1, -2f });
 
-
-                float prevTheta1 = 0; //Random.Range(0, Mathf.PI);l
-                float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
-                float prevTheta3 = 0; //Random.Range(0, Mathf.PI);
+                switch (InitMode)
+                {
+                    case InitModeEnum.Zero:
+                        prevTheta1 = 0;
+                        prevTheta2 = 0;
+                        prevTheta3 = 0;
+                        break;
+                    case InitModeEnum.Random:
+                        prevTheta1 = Random.Range(theta_1min, theta_1max);
+                        prevTheta2 = Random.Range(theta_2min, theta_2max);
+                        prevTheta3 = Random.Range(theta_2min, theta_2max);
+                        break;
+                    case InitModeEnum.Previous:
+                        break;
+                }
 
                 float epsilon = 9999f;
 
@@ -130,9 +156,9 @@ public class IterAlgo : MonoBehaviour
                 x1 -= 0.1f;
 
             }
-            
+
         }
-        
+
 
     }
 
@@ -142,7 +168,7 @@ public class IterAlgo : MonoBehaviour
 
         isFixed = GameObject.Find("Fixed Ratio Check").GetComponent<Toggle>().isOn;
 
-        if(Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.I))
         {
             StartCoroutine(touchOIllusion());
 
@@ -195,7 +221,7 @@ public class IterAlgo : MonoBehaviour
                 // GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
                 // GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                 // GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
-                
+
                 Debug.Log($"1: {finaltheta1}. 2: {finaltheta2}. 3: {finaltheta3}");
 
                 if (!isFixed)
@@ -206,9 +232,9 @@ public class IterAlgo : MonoBehaviour
                 }
                 else
                 {
-                     GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
-                     GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
-                     GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                    GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
+                    GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                    GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                 }
 
                 return;
@@ -326,8 +352,8 @@ public class IterAlgo : MonoBehaviour
         newQ[1] = Mathf.Clamp(newQ[1], theta_2min, theta_2max);
         newQ[2] = Mathf.Clamp(newQ[2], theta_3min, theta_3max);
 
-        if(isFixed)
-            newQ[2] = 2f / 3f * newQ[1] ;
+        if (isFixed)
+            newQ[2] = 2f / 3f * newQ[1];
 
         return newQ;
     }
