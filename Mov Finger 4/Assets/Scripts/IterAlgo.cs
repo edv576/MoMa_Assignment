@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
@@ -43,7 +45,38 @@ public class IterAlgo : MonoBehaviour
         Previous
     };
 
+    class StatisticsTracker
+    {
+        InitModeEnum mode;
 
+        public StatisticsTracker(InitModeEnum initmode)
+        {
+            mode = initmode;
+        }
+
+        public int totalIterations => data.Sum();
+
+        public List<int> data = new List<int>();
+
+        public void WriteToFile()
+        {
+            string str = $"Mode: {mode} \n" +
+                         $"Total iterations: {totalIterations}\n" +
+                         $"data:\n";
+
+
+
+            foreach (var d in data)
+            {
+                str += $"\t{d}";
+            }
+
+            Debug.Log("writing to file!");
+            File.WriteAllText($"stats for {mode.ToString()}.txt", str);
+
+
+        }
+    }
 
     //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (3,-2)
     Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 4f, 2f });
@@ -64,6 +97,9 @@ public class IterAlgo : MonoBehaviour
 
     IEnumerator touchOIllusion()
     {
+
+        var tracker = new StatisticsTracker(InitMode);
+
         int totalIterations = 0;
         if (!isFixed)
         {
@@ -72,9 +108,11 @@ public class IterAlgo : MonoBehaviour
             float prevTheta2 = 0;
             float prevTheta3 = 0;
 
-
+            int positionIterator = 0;
             while (x1 > 2.0f)
             {
+                tracker.data.Add(0);
+
                 goalPos = Vector<float>.Build.DenseOfArray(new[] { x1, -2f });
 
                 switch (InitMode)
@@ -111,7 +149,7 @@ public class IterAlgo : MonoBehaviour
 
                     Debug.Log($"epsilon: {epsilon}");
 
-                   // if (epsilon <= 0.0001f) break;
+                    // if (epsilon <= 0.0001f) break;
 
                     prevTheta1 = newQ[0];
                     prevTheta2 = newQ[1];
@@ -130,6 +168,7 @@ public class IterAlgo : MonoBehaviour
 
                     if (found)
                     {
+                        found = false;
                         // GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
                         // GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                         // GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
@@ -149,22 +188,31 @@ public class IterAlgo : MonoBehaviour
                             GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                         }
 
-                        totalIterations += iterations;
+                        tracker.data[positionIterator]++;
+                        iterations++;
                         break;
                     }
 
+                    tracker.data[positionIterator]++;
                     iterations++;
+
                     if (iterations > maxIterations)
+                    {
                         break;
+                    }
 
                 }
 
-
+                positionIterator++;
                 yield return new WaitForSeconds(0.05f);
                 x1 -= 0.1f;
 
             }
 
+            var totIt = tracker.totalIterations;
+
+            Debug.Log($"Total animation took {totIt} iterations");
+            tracker.WriteToFile();
         }
 
 
