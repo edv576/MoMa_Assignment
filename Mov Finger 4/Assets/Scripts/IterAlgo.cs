@@ -6,6 +6,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Statistics.Mcmc;
 using UnityEditor.Experimental.UIElements;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class IterAlgo : MonoBehaviour
@@ -14,16 +15,43 @@ public class IterAlgo : MonoBehaviour
     private float L2 = 2.24f;
     private float L3 = 1.58f;
 
+    public Slider sliderAngle1;
+    public Slider sliderAngle2;
+    public Slider sliderAngle3;
+    public GameObject sliderJoint1;
+    public GameObject sliderJoint2;
+    public GameObject sliderJoint3;
     private bool found = false;
 
+    private float theta_1min = -Mathf.PI / 3f;       // -60  degrees
+    private float theta_1max = Mathf.PI / 3f;        //  60  degrees
+    private float theta_2min = -2f / 3f * Mathf.PI;  // -120 degrees
+    private float theta_2max = 0;                    //  0   degrees
+    private float theta_3min = -2f / 3f * Mathf.PI;  // -120 degrees
+    private float theta_3max = 0;                    //  0   degrees
 
     //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (1,1)
-    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 6f, -2f });
+    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 5f, -1f });
 
     // Use this for initialization
     void Start()
     {
-        //  inverseJacobian (0, 0, 0);
+
+        sliderJoint1 = GameObject.Find("MCP Slider");
+        sliderJoint2 = GameObject.Find("PIP Slider");
+        sliderJoint3 = GameObject.Find("DIP Slider");
+        sliderAngle1 = sliderJoint1.GetComponent<Slider>();
+        sliderAngle2 = sliderJoint2.GetComponent<Slider>();
+        sliderAngle3 = sliderJoint3.GetComponent<Slider>();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+
+        if (!Input.GetKeyUp("space")) return;
 
         float prevTheta1 = 0; //Random.Range(0, Mathf.PI);
         float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
@@ -57,13 +85,23 @@ public class IterAlgo : MonoBehaviour
 
             prevQ = DenseVector.OfArray(new[] { prevTheta1, prevTheta2, prevTheta3 });
 
-            GameObject.Find("MCP").transform.localRotation = Quaternion.AngleAxis(prevTheta1 * Mathf.Rad2Deg, new Vector3(0, 0, 1));
-            GameObject.Find("PIP").transform.localRotation = Quaternion.AngleAxis(prevTheta2 * Mathf.Rad2Deg, new Vector3(0, 0, 1));
-            GameObject.Find("DIP").transform.localRotation = Quaternion.AngleAxis(prevTheta3 * Mathf.Rad2Deg, new Vector3(0, 0, 1));
 
 
             if (found)
             {
+                // GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
+                // GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                // GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+
+                var finaltheta1 = prevTheta1 * Mathf.Rad2Deg;
+                var finaltheta2 = (prevTheta1 + prevTheta2) * Mathf.Rad2Deg;
+                var finaltheta3 = (prevTheta1 + prevTheta2 + prevTheta3) * Mathf.Rad2Deg;
+                Debug.Log($"1: {finaltheta1}. 2: {finaltheta2}. 3: {finaltheta3}");
+
+                sliderAngle1.value = prevTheta1* Mathf.Rad2Deg;
+                sliderAngle2.value = prevTheta2* Mathf.Rad2Deg;
+                sliderAngle3.value = prevTheta3* Mathf.Rad2Deg;
+
                 return;
             }
 
@@ -74,12 +112,6 @@ public class IterAlgo : MonoBehaviour
         }
 
 
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
 
 
 
@@ -180,6 +212,10 @@ public class IterAlgo : MonoBehaviour
         }
 
         var newQ = q + invJ * deltaT;
+
+        newQ[0] = Mathf.Clamp(newQ[0], theta_1min, theta_1max);
+        newQ[1] = Mathf.Clamp(newQ[1], theta_2min, theta_2max);
+        newQ[2] = Mathf.Clamp(newQ[2], theta_3min, theta_3max);
 
         return newQ;
     }
