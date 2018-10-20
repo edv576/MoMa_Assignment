@@ -25,9 +25,9 @@ public class IterAlgo : MonoBehaviour
     {
         //  inverseJacobian (0, 0, 0);
 
-        float prevTheta1 = Random.Range(0, Mathf.PI);
-        float prevTheta2 = Random.Range(0, Mathf.PI);
-        float prevTheta3 = Random.Range(0, Mathf.PI);
+        float prevTheta1 = 0; //Random.Range(0, Mathf.PI);
+        float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
+        float prevTheta3 = 0; //Random.Range(0, Mathf.PI);
 
         float epsilon = 9999f;
 
