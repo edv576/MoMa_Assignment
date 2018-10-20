@@ -30,8 +30,9 @@ public class IterAlgo : MonoBehaviour
     private float theta_3min = -2f / 3f * Mathf.PI;  // -120 degrees
     private float theta_3max = 0;                    //  0   degrees
 
-    //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (1,1)
-    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 5f, -1f });
+    //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (3,-2)
+    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 3f, -2f });
+    public bool isFixed;
 
     // Use this for initialization
     void Start()
@@ -50,8 +51,10 @@ public class IterAlgo : MonoBehaviour
     void Update()
     {
 
+        isFixed = GameObject.Find("Fixed Ratio Check").GetComponent<Toggle>().isOn;
 
         if (!Input.GetKeyUp("space")) return;
+
 
         float prevTheta1 = 0; //Random.Range(0, Mathf.PI);
         float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
@@ -85,22 +88,33 @@ public class IterAlgo : MonoBehaviour
 
             prevQ = DenseVector.OfArray(new[] { prevTheta1, prevTheta2, prevTheta3 });
 
-
+            var finaltheta1 = prevTheta1 * Mathf.Rad2Deg;
+            var finaltheta2 = (prevTheta1 + prevTheta2) * Mathf.Rad2Deg;
+            var finaltheta3 = (prevTheta1 + prevTheta2 + prevTheta3) * Mathf.Rad2Deg;
+            sliderAngle1.value = prevTheta1 * Mathf.Rad2Deg;
+            sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
+            sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
 
             if (found)
             {
                 // GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
                 // GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                 // GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
-
-                var finaltheta1 = prevTheta1 * Mathf.Rad2Deg;
-                var finaltheta2 = (prevTheta1 + prevTheta2) * Mathf.Rad2Deg;
-                var finaltheta3 = (prevTheta1 + prevTheta2 + prevTheta3) * Mathf.Rad2Deg;
+                
                 Debug.Log($"1: {finaltheta1}. 2: {finaltheta2}. 3: {finaltheta3}");
 
-                sliderAngle1.value = prevTheta1* Mathf.Rad2Deg;
-                sliderAngle2.value = prevTheta2* Mathf.Rad2Deg;
-                sliderAngle3.value = prevTheta3* Mathf.Rad2Deg;
+                if (!isFixed)
+                {
+                    sliderAngle1.value = prevTheta1 * Mathf.Rad2Deg;
+                    sliderAngle2.value = prevTheta2 * Mathf.Rad2Deg;
+                    sliderAngle3.value = prevTheta3 * Mathf.Rad2Deg;
+                }
+                else
+                {
+                     GameObject.Find("MCP").transform.eulerAngles = new Vector3(0, 0, prevTheta1 * Mathf.Rad2Deg);
+                     GameObject.Find("PIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                     GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
+                }
 
                 return;
             }
@@ -216,6 +230,9 @@ public class IterAlgo : MonoBehaviour
         newQ[0] = Mathf.Clamp(newQ[0], theta_1min, theta_1max);
         newQ[1] = Mathf.Clamp(newQ[1], theta_2min, theta_2max);
         newQ[2] = Mathf.Clamp(newQ[2], theta_3min, theta_3max);
+
+        if(isFixed)
+            newQ[2] = 2f / 3f * newQ[1] ;
 
         return newQ;
     }
