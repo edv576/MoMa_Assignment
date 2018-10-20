@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mov Finger 4", "Mov Finger 4.csproj", "{8164743E-34AD-3AA0-F6CC-2548FF92228B}"
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{E7F1C5F1-3B54-0026-FF28-7513EC6494C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.PackageManagerUI.Editor", "Unity.PackageManagerUI.Editor.csproj", "{6877705C-FBD9-0C4F-5AFB-6FB431E5D39D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mov Finger 4.Editor", "Mov Finger 4.Editor.csproj", "{9E56A04A-CE70-D88A-1392-C6EF825DC250}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEditor.StandardEvents", "UnityEditor.StandardEvents.csproj", "{6800202F-4402-D405-F8CB-03DC7BD78B92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{0CEA5DA9-D405-5EC7-EC8A-8CF446CAC595}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,22 +11,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8164743E-34AD-3AA0-F6CC-2548FF92228B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8164743E-34AD-3AA0-F6CC-2548FF92228B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8164743E-34AD-3AA0-F6CC-2548FF92228B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8164743E-34AD-3AA0-F6CC-2548FF92228B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6877705C-FBD9-0C4F-5AFB-6FB431E5D39D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6877705C-FBD9-0C4F-5AFB-6FB431E5D39D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6877705C-FBD9-0C4F-5AFB-6FB431E5D39D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6877705C-FBD9-0C4F-5AFB-6FB431E5D39D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E56A04A-CE70-D88A-1392-C6EF825DC250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E56A04A-CE70-D88A-1392-C6EF825DC250}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E56A04A-CE70-D88A-1392-C6EF825DC250}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E56A04A-CE70-D88A-1392-C6EF825DC250}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6800202F-4402-D405-F8CB-03DC7BD78B92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6800202F-4402-D405-F8CB-03DC7BD78B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6800202F-4402-D405-F8CB-03DC7BD78B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6800202F-4402-D405-F8CB-03DC7BD78B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F1C5F1-3B54-0026-FF28-7513EC6494C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F1C5F1-3B54-0026-FF28-7513EC6494C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F1C5F1-3B54-0026-FF28-7513EC6494C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F1C5F1-3B54-0026-FF28-7513EC6494C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CEA5DA9-D405-5EC7-EC8A-8CF446CAC595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CEA5DA9-D405-5EC7-EC8A-8CF446CAC595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CEA5DA9-D405-5EC7-EC8A-8CF446CAC595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CEA5DA9-D405-5EC7-EC8A-8CF446CAC595}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

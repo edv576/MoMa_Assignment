@@ -30,7 +30,11 @@ public class IterAlgo : MonoBehaviour
     private float theta_3min = -2f / 3f * Mathf.PI;  // -120 degrees
     private float theta_3max = 0;                    //  0   degrees
 
-    public InitModeEnum InitMode  = InitModeEnum.Zero;
+    private float lastTheta1 = -0.001f;
+    private float lastTheta2 = -0.001f;
+    private float lastTheta3 = -0.001f;
+
+    public InitModeEnum InitMode = InitModeEnum.Zero;
 
     public enum InitModeEnum
     {
@@ -42,7 +46,7 @@ public class IterAlgo : MonoBehaviour
 
 
     //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (3,-2)
-    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 0f, -2f });
+    Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 4f, 2f });
     public bool isFixed;
 
     // Use this for initialization
@@ -176,10 +180,18 @@ public class IterAlgo : MonoBehaviour
 
         if (!Input.GetKeyUp("space")) return;
 
+        var gps = GameObject.Find("Destination").transform.position;
+        Vector<float>.Build.DenseOfArray(new[] { gps.x, gps.y });
 
-        float prevTheta1 = 0; //Random.Range(0, Mathf.PI);
-        float prevTheta2 = 0; //Random.Range(0, Mathf.PI);
-        float prevTheta3 = 0; //Random.Range(0, Mathf.PI);
+
+       float prevTheta1 = lastTheta1;
+       float prevTheta2 = lastTheta2;
+       float prevTheta3 = lastTheta3;
+
+
+        //float prevTheta1 = Random.Range(theta_1min, theta_1max);
+        //float prevTheta2 = Random.Range(theta_2min, theta_2max);
+        //float prevTheta3 = Random.Range(theta_2min, theta_2max);
 
         float epsilon = 9999f;
 
@@ -199,7 +211,7 @@ public class IterAlgo : MonoBehaviour
 
             Debug.Log($"epsilon: {epsilon}");
 
-            if (epsilon <= 0.0001f) break;
+            //if (epsilon <= 0.0001f) break;
 
             prevTheta1 = newQ[0];
             prevTheta2 = newQ[1];
