@@ -7,15 +7,22 @@ using MathNet.Numerics.LinearAlgebra.Single;
 
 public class ValuesManager : MonoBehaviour {
 
+    GameObject destination;
+
     Slider sliderAngle1;
     Slider sliderAngle2;
     Slider sliderAngle3;
     Text coordinatesLastO;
     Text anglesLastO;
+    Toggle checkOnO;
+    InputField inputDestinationX;
+    InputField inputDestinationY;
+    Button buttonDestination;
 
     float proximalPhalanxLength;
     float intermediatePhalanxLength;
     float distalPhalanxLength;
+    bool onO = false;
 
     // Use this for initialization
     void Start () {
@@ -27,6 +34,15 @@ public class ValuesManager : MonoBehaviour {
         sliderAngle2 = GameObject.Find("PIP Slider").GetComponent<Slider>();
         sliderAngle3 = GameObject.Find("DIP Slider").GetComponent<Slider>();
 
+        checkOnO = GameObject.Find("Check Destination on O").GetComponent<Toggle>();
+
+        inputDestinationX = GameObject.Find("Input Destination X").GetComponent<InputField>();
+        inputDestinationY = GameObject.Find("Input Destination Y").GetComponent<InputField>();
+
+        buttonDestination = GameObject.Find("Button Destination").GetComponent<Button>();
+
+        destination = GameObject.Find("Destination");
+
         proximalPhalanxLength = 39.8f;
         intermediatePhalanxLength = 22.4f;
         distalPhalanxLength = 15.8f;
@@ -34,6 +50,43 @@ public class ValuesManager : MonoBehaviour {
         sliderAngle1.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
         sliderAngle2.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
         sliderAngle3.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
+
+        checkOnO.onValueChanged.AddListener(delegate { ValueOnOChangeCheck(); });
+
+        buttonDestination.onClick.AddListener(delegate { ClickDestination(); });
+
+    }
+
+    public void ClickDestination()
+    {
+        if(onO)
+        {
+ 
+
+            destination.transform.position = new Vector3(float.Parse(inputDestinationX.text), -2.0f, 0.0f);
+
+        }
+        else
+        {
+            destination.transform.position = new Vector3(float.Parse(inputDestinationX.text), float.Parse(inputDestinationY.text), 0.0f);
+
+        }
+
+    }
+
+    public void ValueOnOChangeCheck()
+    {
+        if(checkOnO.isOn)
+        {
+            onO = true;
+            //(Text)GameObject.Find("Label Destination Y").GetComponent<Text>().
+
+        }
+        else
+        {
+            onO = false;
+            //GameObject.Find("Input Destination Y").SetActive(false);
+        }
 
     }
 
