@@ -34,9 +34,15 @@ public class IterAlgo : MonoBehaviour
     private float theta_3min = -2f / 3f * Mathf.PI;  // -120 degrees
     private float theta_3max = 0;                    //  0   degrees
 
-    private float lastTheta1 = -0.001f;
-    private float lastTheta2 = -0.001f;
-    private float lastTheta3 = -0.001f;
+    private float lastTheta1 = -0.00001f;
+    private float lastTheta2 = -0.00001f;
+    private float lastTheta3 = -0.00001f;
+
+
+    //Note only make one of these true, otherwise weird behaviour!
+    private bool horizontalProximal;
+    private bool verticalDIPWorld;
+    private bool verticalDIPLocal = true;
 
     public InitModeEnum InitMode = InitModeEnum.Zero;
 
@@ -84,6 +90,7 @@ public class IterAlgo : MonoBehaviour
     Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 4f, 2f });
     Vector<float> previousGoalPos = Vector<float>.Build.DenseOfArray(new[] { 4f, 2f });
     public bool isFixed;
+    private GameObject[] contraintToggles;
 
     // Use this for initialization
     void Start()
@@ -95,7 +102,17 @@ public class IterAlgo : MonoBehaviour
         sliderAngle1 = sliderJoint1.GetComponent<Slider>();
         sliderAngle2 = sliderJoint2.GetComponent<Slider>();
         sliderAngle3 = sliderJoint3.GetComponent<Slider>();
+        MCPJoint = GameObject.Find("MCP").transform;
+        PIPJoint = GameObject.Find("PIP").transform;
+        DIPJoint = GameObject.Find("DIP").transform;
 
+        contraintToggles = new[]
+        {
+            GameObject.Find("Fixed Ratio Check"),
+            GameObject.Find("Horizontal Proximal"),
+            GameObject.Find("DIP Vert Local"),
+            GameObject.Find("DIP Vert World"),
+        };
     }
 
     IEnumerator rotateJoints(int jointNr, float theta1 = 0, float theta2 = 0, float theta3 = 0, int level = 0)
@@ -396,14 +413,27 @@ public class IterAlgo : MonoBehaviour
         return null;
     }
 
-    private Vector3 LastPos = new Vector3(7.8f,1f,0);
+    private Vector3 LastPos = new Vector3(7.8f, 1f, 0);
+    private Transform MCPJoint;
+    private Transform PIPJoint;
+    private Transform DIPJoint;
 
     // Update is called once per frame
     void Update()
     {
-        // Debug.DrawLine(new Vector3(0,0,0), Time.realtimeSinceStartup* new Vector3(5,5,0), Color.red);
-
         isFixed = GameObject.Find("Fixed Ratio Check").GetComponent<Toggle>().isOn;
+        horizontalProximal = GameObject.Find("Horizontal Proximal").GetComponent<Toggle>().isOn;
+        verticalDIPWorld = GameObject.Find("DIP Vert World").GetComponent<Toggle>().isOn;
+        verticalDIPLocal = GameObject.Find("DIP Vert Local").GetComponent<Toggle>().isOn;
+
+        var list = new[] {isFixed, horizontalProximal, verticalDIPWorld, verticalDIPLocal};
+
+        int c = list.Count(t => t);
+
+        if (c > 1)
+            throw new Exception("two constraints at the same time are on!");
+
+        //DIPJoint.eulerAngles = new Vector3(0,0,-90);
 
         if (Input.GetKeyUp(KeyCode.I))
         {
@@ -422,23 +452,37 @@ public class IterAlgo : MonoBehaviour
             StartCoroutine(TraceReachablePositions());
         }
 
- 
+
         //if (!Input.GetKeyUp("space")) return;
 
 
         var gps = GameObject.Find("Destination").transform.position;
         goalPos = Vector<float>.Build.DenseOfArray(new[] { gps.x, gps.y });
 
-        if (isAnimated == 1 && goalPos != previousGoalPos)
+        if (isAnimated == 1 && !Equals(goalPos, previousGoalPos))
         {
-            float prevTheta1 = lastTheta1;
-            float prevTheta2 = lastTheta2;
-            float prevTheta3 = lastTheta3;
+            float prevTheta1;
+            float prevTheta2;
+            float prevTheta3;
 
-
-            // float prevTheta1 = Random.Range(theta_1min, theta_1max);
-            // float prevTheta2 = Random.Range(theta_2min, theta_2max);
-            // float prevTheta3 = Random.Range(theta_2min, theta_2max);
+            if (InitMode == InitModeEnum.Previous)
+            {
+                prevTheta1 = lastTheta1;
+                prevTheta2 = lastTheta2;
+                prevTheta3 = lastTheta3;
+            }
+            else if (InitMode == InitModeEnum.Random)
+            {
+                prevTheta1 = Random.Range(theta_1min, theta_1max);
+                prevTheta2 = Random.Range(theta_2min, theta_2max);
+                prevTheta3 = Random.Range(theta_2min, theta_2max);
+            }
+            else  //zero
+            {
+                prevTheta1 = -0.0001f;
+                prevTheta2 = -0.0001f;
+                prevTheta3 = -0.0001f;
+            }
 
             float epsilon = 9999f;
 
@@ -500,7 +544,7 @@ public class IterAlgo : MonoBehaviour
                     //    GameObject.Find("DIP").transform.eulerAngles = new Vector3(0, 0, (prevTheta3 + prevTheta1 + prevTheta2) * Mathf.Rad2Deg);
                     //}
 
-                    return;
+                    break;
                 }
 
                 iterations++;
@@ -509,12 +553,16 @@ public class IterAlgo : MonoBehaviour
 
             }
 
+            Debug.Log($"\n----------------------" +
+                      $"ITERATIONS:{iterations}" +
+                      $"\n----------------------");
+
             previousGoalPos = goalPos;
 
         }
 
-        var currentPos = GameObject.Find("Tip").transform.position  ;
-        var diffLast = (LastPos-currentPos).magnitude;
+        var currentPos = GameObject.Find("Tip").transform.position;
+        var diffLast = (LastPos - currentPos).magnitude;
 
         if (diffLast > 0.2f)
         {
@@ -522,7 +570,7 @@ public class IterAlgo : MonoBehaviour
 
             if (tracebutton.isOn)
             {
-                Debug.DrawLine(LastPos,currentPos,Color.green,float.PositiveInfinity,false);
+                Debug.DrawLine(LastPos, currentPos, Color.green, float.PositiveInfinity, false);
 
             }
 
@@ -649,6 +697,28 @@ public class IterAlgo : MonoBehaviour
 
         if (isFixed)
             newQ[2] = 2f / 3f * newQ[1];
+
+        if (horizontalProximal)
+            newQ[0] = 0;
+
+
+        if (verticalDIPWorld)
+        {
+            var t1 = newQ[0];
+            var t2 = newQ[1];
+
+            //make  sure the new rotation is set vertically in world space
+            newQ[2] = -Mathf.PI / 2f - t1 - t2;
+        }
+
+        if (verticalDIPLocal)
+        {
+            //set it to 90 degrees with respect to the PIP joint
+            newQ[2] = -Mathf.PI / 2f;
+        }
+        newQ[2] = Mathf.Clamp(newQ[2], theta_3min, theta_3max);
+
+
 
         return newQ;
     }

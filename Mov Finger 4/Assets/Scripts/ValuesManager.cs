@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 
-public class ValuesManager : MonoBehaviour {
+public class ValuesManager : MonoBehaviour
+{
 
     GameObject destination;
 
@@ -25,7 +26,8 @@ public class ValuesManager : MonoBehaviour {
     bool onO = false;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
         coordinatesLastO = GameObject.Find("Values Last Point O").GetComponent<Text>();
         anglesLastO = GameObject.Find("Values Angles Last Point O").GetComponent<Text>();
@@ -55,13 +57,20 @@ public class ValuesManager : MonoBehaviour {
 
         buttonDestination.onClick.AddListener(delegate { ClickDestination(); });
 
+
+        GameObject.Find("Fixed Ratio Check").GetComponent<Toggle>().onValueChanged.AddListener(delegate { disableOtherToggles(0); });
+        GameObject.Find("Horizontal Proximal").GetComponent<Toggle>().onValueChanged.AddListener(delegate { disableOtherToggles(1); });
+        GameObject.Find("DIP Vert Local").GetComponent<Toggle>().onValueChanged.AddListener(delegate { disableOtherToggles(2); });
+        GameObject.Find("DIP Vert World").GetComponent<Toggle>().onValueChanged.AddListener(delegate { disableOtherToggles(3); });
+
+
     }
 
     public void ClickDestination()
     {
-        if(onO)
+        if (onO)
         {
- 
+
 
             destination.transform.position = new Vector3(float.Parse(inputDestinationX.text), -2.0f, 0.0f);
 
@@ -76,7 +85,7 @@ public class ValuesManager : MonoBehaviour {
 
     public void ValueOnOChangeCheck()
     {
-        if(checkOnO.isOn)
+        if (checkOnO.isOn)
         {
             onO = true;
             //(Text)GameObject.Find("Label Destination Y").GetComponent<Text>().
@@ -95,11 +104,11 @@ public class ValuesManager : MonoBehaviour {
         float x, y;
 
         x = proximalPhalanxLength * Mathf.Cos(sliderAngle1.value * (Mathf.PI / 180.0f)) +
-            intermediatePhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
-            distalPhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
+        intermediatePhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
+        distalPhalanxLength * Mathf.Cos((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
         y = proximalPhalanxLength * Mathf.Sin(sliderAngle1.value * (Mathf.PI / 180.0f)) +
-            intermediatePhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
-            distalPhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
+        intermediatePhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value) * (Mathf.PI / 180.0f)) +
+        distalPhalanxLength * Mathf.Sin((sliderAngle1.value + sliderAngle2.value + sliderAngle3.value) * (Mathf.PI / 180.0f));
 
         x = Mathf.Round(x * 100f) / 100f;
         y = Mathf.Round(y * 100f) / 100f;
@@ -107,16 +116,41 @@ public class ValuesManager : MonoBehaviour {
         if (y < -20.0f)
         {
             coordinatesLastO.text = "X => " + x.ToString() + " Y => " + y.ToString();
-            anglesLastO.text = "MCP => " + Mathf.Round(sliderAngle1.value * 100f) / 100f + 
-                " \nPIP => " + Mathf.Round(sliderAngle2.value * 100f) / 100f + 
-                " \nDIP => " + Mathf.Round(sliderAngle3.value * 100f) / 100f;
+            anglesLastO.text = "MCP => " + Mathf.Round(sliderAngle1.value * 100f) / 100f +
+            " \nPIP => " + Mathf.Round(sliderAngle2.value * 100f) / 100f +
+            " \nDIP => " + Mathf.Round(sliderAngle3.value * 100f) / 100f;
         }
 
 
     }
 
+    public delegate void OnVariableChangeDelegate(int newVal);
+    public event OnVariableChangeDelegate ConstraintChange;
+
+    void disableOtherToggles(int nr)
+    {
+        var toggles = new[]
+        {
+            GameObject.Find("Fixed Ratio Check"),
+            GameObject.Find("Horizontal Proximal"),
+            GameObject.Find("DIP Vert Local"),
+            GameObject.Find("DIP Vert World"),
+        };
+
+        if (toggles[nr].GetComponent<Toggle>().isOn == false) return;
+
+        for (int i = 0; i < toggles.Length; i++)
+        {
+            if (i == nr) continue;
+            toggles[i].GetComponent<Toggle>().isOn = false;
+        }
+
+    }
+
+
     // Update is called once per frame
-    void Update () {
-		
-	}
+    void Update()
+    {
+
+    }
 }
