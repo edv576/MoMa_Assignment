@@ -53,7 +53,7 @@ public class IterAlgo : MonoBehaviour
         Previous
     };
 
-    class StatisticsTracker
+     class StatisticsTracker
     {
         InitModeEnum mode;
 
@@ -68,7 +68,20 @@ public class IterAlgo : MonoBehaviour
 
         public void WriteToFile()
         {
+            if (!trackStats) return;
+
+            string cnstr = "no constraint";
+            foreach (var t in contraintToggles)
+            {
+                if (t.GetComponent<Toggle>().isOn)
+                {
+                    cnstr = t.name;
+                    break;
+                }
+            }
+
             string str = $"Mode: {mode} \n" +
+                         $"constraint: {cnstr} \n" +
                          $"Total iterations: {totalIterations}\n" +
                          $"data:\n";
 
@@ -80,17 +93,18 @@ public class IterAlgo : MonoBehaviour
             }
 
             Debug.Log("writing to file!");
-            File.WriteAllText($"stats for {mode.ToString()}.txt", str);
+            File.WriteAllText($"stats for {mode.ToString()} with {cnstr}.txt", str);
 
 
         }
     }
 
+    private static bool trackStats = true;
     //TODO: THIS SHOULD BE SET VARIABLY, it's now set to (3,-2)
     Vector<float> goalPos = Vector<float>.Build.DenseOfArray(new[] { 4f, 2f });
     Vector<float> previousGoalPos = Vector<float>.Build.DenseOfArray(new[] { 4f, 2f });
     public bool isFixed;
-    private GameObject[] contraintToggles;
+    private static GameObject[] contraintToggles;
 
     // Use this for initialization
     void Start()
@@ -285,7 +299,7 @@ public class IterAlgo : MonoBehaviour
         var tracker = new StatisticsTracker(InitMode);
 
         int totalIterations = 0;
-        if (!isFixed)
+        //if (!isFixed)
         {
             float x1 = 6.0f;
             float prevTheta1 = 0;
@@ -293,7 +307,7 @@ public class IterAlgo : MonoBehaviour
             float prevTheta3 = 0;
 
             int positionIterator = 0;
-            while (x1 > 2.0f)
+            while (x1 > 3.4f)
             {
                 tracker.data.Add(0);
 
@@ -389,7 +403,8 @@ public class IterAlgo : MonoBehaviour
 
                 positionIterator++;
                 yield return new WaitForSeconds(0.05f);
-                x1 -= 0.1f;
+                //x1 -= 0.1f;
+                x1 -= (6.0f - 3.4f) / 40f;
 
             }
 
